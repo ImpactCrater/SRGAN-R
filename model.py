@@ -66,6 +66,7 @@ def SRGAN_d(input_images, is_train=True, reuse=False):
         n = Conv2d(n, df_dim * 8, (4, 4), (2, 2), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='c7')
         n = Conv2d(n, df_dim * 8, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='c8')
         n = Conv2d(n, df_dim * 8, (4, 4), (2, 2), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='c9')
+        n = GroupNormLayer(n, groups=32, act=None, name='gn0')
 
         n = FlattenLayer(n, name='f0')
         n = DenseLayer(n, n_units=128, act=swish, W_init=w_init, name='d0')

@@ -96,7 +96,7 @@ def train():
     d_loss = d_loss1 + d_loss2
 
     g_gan_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_fake), logits=logits_fake))
-    g_loss = 1e-2 * g_gan_loss + mse_loss
+    g_loss = 1e-1 * g_gan_loss + mse_loss
 
     d_real = tf.reduce_mean(logits_real)
     d_fake = tf.reduce_mean(logits_fake)

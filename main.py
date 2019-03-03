@@ -25,8 +25,6 @@ sample_batch_size = config.TRAIN.sample_batch_size
 batch_size = config.TRAIN.batch_size
 learning_rate = config.TRAIN.learning_rate
 beta1 = config.TRAIN.beta1
-## initialize G
-n_epoch_g_init = config.TRAIN.n_epoch_g_init
 ## adversarial learning
 n_epoch_gan = config.TRAIN.n_epoch_gan
 ## paths
@@ -58,9 +56,7 @@ def load_deep_file_list(path=None, regx='\.npz', printable=True):
 
 def train():
     ## create folders to save result images and trained model
-    save_dir_g_init = samples_path + "g_init"
     save_dir_gan = samples_path + "gan"
-    tl.files.exists_or_mkdir(save_dir_g_init)
     tl.files.exists_or_mkdir(save_dir_gan)
     tl.files.exists_or_mkdir(checkpoint_path)
 
@@ -96,7 +92,7 @@ def train():
     d_loss = d_loss1 + d_loss2
 
     g_gan_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_fake), logits=logits_fake))
-    g_loss = 1e-2 * g_gan_loss + mse_loss
+    g_loss = 1e-1 * g_gan_loss + mse_loss
 
     d_real = tf.reduce_mean(logits_real)
     d_fake = tf.reduce_mean(logits_fake)
@@ -107,9 +103,6 @@ def train():
     g_vars = tl.layers.get_variables_with_name('SRGAN_g', True, True)
     d_vars = tl.layers.get_variables_with_name('SRGAN_d', True, True)
 
-    ## Pre-train
-    g_optim_init = tf.train.AdamOptimizer(learning_rate=learning_rate_var, beta1=beta1).minimize(mse_loss, var_list=g_vars)
-
     ## SRGAN
     g_optim = tf.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(g_loss, var_list=g_vars)
     d_optim = tf.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(d_loss, var_list=d_vars)
@@ -117,8 +110,7 @@ def train():
     ###========================== RESTORE MODEL =============================###
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=False))
     sess.run(tf.variables_initializer(tf.global_variables()))
-    if tl.files.load_and_assign_npz(sess=sess, name=checkpoint_path + 'g.npz', network=net_g) is False:
-        tl.files.load_and_assign_npz(sess=sess, name=checkpoint_path + 'g_init.npz', network=net_g)
+    tl.files.load_and_assign_npz(sess=sess, name=checkpoint_path + 'g.npz', network=net_g)
     tl.files.load_and_assign_npz(sess=sess, name=checkpoint_path + 'd.npz', network=net_d)
 
     ###============================= TRAINING ===============================###
@@ -127,53 +119,8 @@ def train():
     print('sample HR sub-image:', sample_imgs_384.shape, sample_imgs_384.min(), sample_imgs_384.max())
     sample_imgs_96 = tl.prepro.threading_data(sample_imgs_384, fn=downsample_fn)
     print('sample LR sub-image:', sample_imgs_96.shape, sample_imgs_96.min(), sample_imgs_96.max())
-    tl.vis.save_images(sample_imgs_96, [ni, ni], save_dir_g_init + '/_train_sample_96.png')
-    tl.vis.save_images(sample_imgs_384, [ni, ni], save_dir_g_init + '/_train_sample_384.png')
     tl.vis.save_images(sample_imgs_96, [ni, ni], save_dir_gan + '/_train_sample_96.png')
     tl.vis.save_images(sample_imgs_384, [ni, ni], save_dir_gan + '/_train_sample_384.png')
-
-    ###========================= initialize G ====================###
-    ## fixed learning rate
-    sess.run(tf.assign(learning_rate_var, learning_rate))
-    for epoch in range(0, n_epoch_g_init + 1):
-        epoch_time = time.time()
-        total_mse_loss, n_iter = 0, 0
-
-        train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*.png', printable=False)
-        random.shuffle(train_hr_img_list)
-
-        list_length = len(train_hr_img_list)
-        print("Number of images: %d" % (list_length))
-
-        if list_length % batch_size != 0:
-            train_hr_img_list += train_hr_img_list[0:batch_size - list_length % batch_size:1]
-
-        list_length = len(train_hr_img_list)
-        print("Length of list: %d" % (list_length))
-
-        for idx in range(0, list_length, batch_size):
-            step_time = time.time()
-            b_imgs_list = train_hr_img_list[idx : idx + batch_size]
-            b_imgs = tl.prepro.threading_data(b_imgs_list, fn=get_imgs_fn, path=train_hr_img_path)
-            b_imgs_384 = tl.prepro.threading_data(b_imgs, fn=crop_sub_imgs_fn, is_random=True)
-            b_imgs_96 = tl.prepro.threading_data(b_imgs_384, fn=downsample_fn)
-            b_imgs_384 = tl.prepro.threading_data(b_imgs_384, fn=rescale_m1p1)
-
-            ## update G
-            errM, _ = sess.run([mse_loss, g_optim_init], {t_image: b_imgs_96, t_target_image: b_imgs_384})
-            print("Epoch[%2d/%2d] %4d time: %4.2fs mse: %.8f " % (epoch, n_epoch_g_init, n_iter, time.time() - step_time, errM))
-            total_mse_loss += errM
-            n_iter += 1
-        log = "[*] Epoch[%2d/%2d] time: %4.2fs mse: %.8f" % (epoch, n_epoch_g_init, time.time() - epoch_time, total_mse_loss / n_iter)
-        print(log)
-
-        ## quick evaluation on train set
-        out = sess.run(net_g_test.outputs, {sample_t_image: sample_imgs_96})
-        print("[*] save images")
-        tl.vis.save_images(out, [ni, ni], save_dir_g_init + '/train_%d.png' % epoch)
-
-        ## save model
-        tl.files.save_npz(net_g.all_params, name=checkpoint_path + 'g_init.npz', sess=sess)
 
     ###========================= train GAN =========================###
     for epoch in range(0, n_epoch_gan + 1):

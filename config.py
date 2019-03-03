@@ -21,9 +21,6 @@ config.TRAIN.batch_size = 16
 config.TRAIN.learning_rate = 1e-4
 config.TRAIN.beta1 = 0.9
 
-## initialize G
-config.TRAIN.n_epoch_g_init = 4
-
 ## adversarial learning
 config.TRAIN.n_epoch_gan = 1000
 

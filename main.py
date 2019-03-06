@@ -87,11 +87,9 @@ def train():
     mse_loss = tf.reduce_mean(tf.square(t_target_image - net_g.outputs))
 
     # GAN Loss
-    d_loss1 = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_real), logits=logits_real))
-    d_loss2 = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.zeros_like(logits_fake), logits=logits_fake))
-    d_loss = d_loss1 + d_loss2
+    d_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) - 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) + 1)))
+    g_gan_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) + 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) - 1)))
 
-    g_gan_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(logits_fake), logits=logits_fake))
     g_loss = 1e-1 * g_gan_loss + mse_loss
 
     d_real = tf.reduce_mean(logits_real)
@@ -123,9 +121,8 @@ def train():
     tl.vis.save_images(sample_imgs_384, [ni, ni], save_dir_gan + '/_train_sample_384.png')
 
     ###========================= train GAN =========================###
+    sess.run(tf.assign(learning_rate_var, learning_rate))
     for epoch in range(0, n_epoch_gan + 1):
-        sess.run(tf.assign(learning_rate_var, learning_rate))
-
         epoch_time = time.time()
         total_d_loss, total_g_loss, n_iter = 0, 0, 0
 
@@ -222,3 +219,4 @@ if __name__ == '__main__':
         evaluate()
     else:
         raise Exception("Unknow --mode")
+        

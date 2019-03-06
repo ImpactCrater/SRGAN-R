@@ -24,7 +24,6 @@ sample_batch_size = config.TRAIN.sample_batch_size
 ## Adam
 batch_size = config.TRAIN.batch_size
 learning_rate = config.TRAIN.learning_rate
-beta1 = config.TRAIN.beta1
 ## adversarial learning
 n_epoch_gan = config.TRAIN.n_epoch_gan
 ## paths

@@ -19,7 +19,6 @@ config.samples_path = config.home_path + '/SRGAN-R/samples/'
 config.TRAIN.sample_batch_size = 25
 config.TRAIN.batch_size = 16
 config.TRAIN.learning_rate = 1e-4
-config.TRAIN.beta1 = 0.9
 
 ## adversarial learning
 config.TRAIN.n_epoch_gan = 1000

@@ -218,4 +218,3 @@ if __name__ == '__main__':
         evaluate()
     else:
         raise Exception("Unknow --mode")
-        

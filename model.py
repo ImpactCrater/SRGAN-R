@@ -82,7 +82,7 @@ def SRGAN_d(input_images, is_train=True, reuse=False):
         n = GroupNormLayer(n, groups=32, act=None, name='gn10')
 
         n = FlattenLayer(n, name='f0')
-        n = DenseLayer(n, n_units=1024, act=swish, W_init=w_init, name='d0')
+        n = DenseLayer(n, n_units=2048, act=swish, W_init=w_init, name='d0')
         n = DenseLayer(n, n_units=1, act=tf.identity, W_init=w_init, name='d1')
         logits = n.outputs
 

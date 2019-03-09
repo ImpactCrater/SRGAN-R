@@ -33,6 +33,7 @@ valid_hr_img_path = config.VALID.hr_img_path
 train_hr_img_path = config.TRAIN.hr_img_path
 eval_img_name = config.VALID.eval_img_name
 eval_img_path = config.VALID.eval_img_path
+initial_half_epoch = float(config.TRAIN.initial_half_epoch)
 
 ni = int(np.sqrt(sample_batch_size))
 
@@ -86,10 +87,12 @@ def train():
     mse_loss = tf.reduce_mean(tf.square(t_target_image - net_g.outputs))
 
     # GAN Loss
+    gan_loss_multiplier = tf.placeholder(tf.float32)
+
     d_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) - 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) + 1)))
     g_gan_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) + 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) - 1)))
 
-    g_loss = 1e-1 * g_gan_loss + mse_loss
+    g_loss = gan_loss_multiplier * g_gan_loss + mse_loss
 
     d_real = tf.reduce_mean(logits_real)
     d_fake = tf.reduce_mean(logits_fake)
@@ -137,6 +140,10 @@ def train():
         list_length = len(train_hr_img_list)
         print("Length of list: %d" % (list_length))
 
+        calculate_gan_loss_multiplier = tf.sigmoid(epoch - initial_half_epoch)
+        gan_loss_multiplier_value = sess.run(calculate_gan_loss_multiplier)
+        print("gan_loss_multiplier: %.8f" % (gan_loss_multiplier_value))
+
         for idx in range(0, list_length, batch_size):
             step_time = time.time()
             b_imgs_list = train_hr_img_list[idx : idx + batch_size]
@@ -148,7 +155,7 @@ def train():
             ## update D
             errD, d_r, d_f, _ = sess.run([d_loss, d_real, d_fake, d_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
             ## update G
-            errG, errM, errA, _ = sess.run([g_loss, mse_loss, g_gan_loss, g_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
+            errG, errM, errA, _ = sess.run([g_loss, mse_loss, g_gan_loss, g_optim], {gan_loss_multiplier: gan_loss_multiplier_value, t_image: b_imgs_96, t_target_image: b_imgs_384})
             print("Epoch[%2d/%2d] %4d time: %4.2fs d_loss: %.8f g_loss: %.8f (mse: %.8f gan: %.8f) d_r: %.8f d_f: %.8f" %
                   (epoch, n_epoch_gan, n_iter, time.time() - step_time, errD, errG, errM, errA, d_r, d_f))
             total_d_loss += errD

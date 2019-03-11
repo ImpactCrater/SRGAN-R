@@ -4,7 +4,7 @@
 
 - **Relativistic LSGAN.**
 - **Changed to use "Group Normalization" layer instead of "Batch Normalization" layers.**
-- **Increased channels in Generator.**
+- **Increased channels in Generator and Discriminator.**
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Without "VGG".**
 

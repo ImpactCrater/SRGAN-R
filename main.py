@@ -83,8 +83,8 @@ def train():
 
     # ###========================== DEFINE TRAIN OPS ==========================###
 
-    # MSE Loss
-    mse_loss = tf.reduce_mean(tf.square(t_target_image - net_g.outputs))
+    # MAE Loss
+    mae_loss = tf.reduce_mean(tf.map_fn(tf.abs, t_target_image - net_g.outputs))
 
     # GAN Loss
     gan_loss_multiplier = tf.placeholder(tf.float32)
@@ -92,7 +92,7 @@ def train():
     d_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) - 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) + 1)))
     g_gan_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) + 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) - 1)))
 
-    g_loss = gan_loss_multiplier * g_gan_loss + mse_loss
+    g_loss = gan_loss_multiplier * g_gan_loss + mae_loss
 
     d_real = tf.reduce_mean(logits_real)
     d_fake = tf.reduce_mean(logits_fake)
@@ -155,8 +155,8 @@ def train():
             ## update D
             errD, d_r, d_f, _ = sess.run([d_loss, d_real, d_fake, d_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
             ## update G
-            errG, errM, errA, _ = sess.run([g_loss, mse_loss, g_gan_loss, g_optim], {gan_loss_multiplier: gan_loss_multiplier_value, t_image: b_imgs_96, t_target_image: b_imgs_384})
-            print("Epoch[%2d/%2d] %4d time: %4.2fs d_loss: %.8f g_loss: %.8f (mse: %.8f gan: %.8f) d_r: %.8f d_f: %.8f" %
+            errG, errM, errA, _ = sess.run([g_loss, mae_loss, g_gan_loss, g_optim], {gan_loss_multiplier: gan_loss_multiplier_value, t_image: b_imgs_96, t_target_image: b_imgs_384})
+            print("Epoch[%2d/%2d] %4d time: %4.2fs d_loss: %.8f g_loss: %.8f (mae: %.8f gan: %.8f) d_r: %.8f d_f: %.8f" %
                   (epoch, n_epoch_gan, n_iter, time.time() - step_time, errD, errG, errM, errA, d_r, d_f))
             total_d_loss += errD
             total_g_loss += errG

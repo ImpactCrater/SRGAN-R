@@ -17,7 +17,7 @@ from tensorlayer.layers import *
 def SRGAN_g(t_image, is_train=False, reuse=False):
     """ Generator in Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network
     """
-    w_init = tf.initializers.variance_scaling(scale=0.1, mode='fan_avg', distribution='truncated_normal', seed=None)
+    w_init = tf.initializers.variance_scaling(scale=0.01, mode='fan_avg', distribution='truncated_normal', seed=None)
     b_init = None # tf.constant_initializer(value=0.0)
     df_dim = 128
     swish = lambda x: tf.nn.swish(x)
@@ -66,7 +66,7 @@ def SRGAN_g(t_image, is_train=False, reuse=False):
 
 
 def SRGAN_d(input_images, is_train=True, reuse=False):
-    w_init = tf.initializers.variance_scaling(scale=1.0, mode='fan_avg', distribution='truncated_normal', seed=None)
+    w_init = tf.initializers.variance_scaling(scale=0.1, mode='fan_avg', distribution='truncated_normal', seed=None)
     b_init = None # tf.constant_initializer(value=0.0)
     df_dim = 64
     swish = lambda x: tf.nn.swish(x)

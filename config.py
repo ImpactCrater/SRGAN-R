@@ -21,7 +21,7 @@ config.TRAIN.batch_size = 9
 config.TRAIN.learning_rate = 1e-4
 
 ## adversarial learning
-config.TRAIN.initial_half_epoch = 8
+config.TRAIN.initial_half_epoch = 10
 config.TRAIN.n_epoch_gan = 1000
 
 ## train set location

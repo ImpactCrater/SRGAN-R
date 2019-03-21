@@ -12,22 +12,7 @@
 - **Using small weight initialization.**
 - **Without "VGG".**
 
-
-### My Results
-
-<a href="http://tensorlayer.readthedocs.io">
-<div align="center">
-	<img src="img/Comparison_1.png"/>
-</div>
-</a>
-
-<a href="http://tensorlayer.readthedocs.io">
-<div align="center">
-	<img src="img/Comparison_2.png"/>
-</div>
-</a>
-Original image is from iStock.
-
+### This model is incomplete for now.
 
 ### System Requirements
 - **Memory: 12GB RAM**

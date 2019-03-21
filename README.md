@@ -6,7 +6,7 @@
 - **Relativistic LSGAN.**
 - **Changed to use "Group Normalization" layers instead of "Batch Normalization" layers.**
 - **Increased channels in Generator.**
-- **Residual in Residual Dense Block (RRDB) structure in Generator (Using addition, not concatenation).**
+- **Residual in Residual Dense Block (RRDB) structure in Generator.**
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Using MAE (Mean Absolute Error) loss.**
 - **Using small weight initialization.**

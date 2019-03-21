@@ -30,23 +30,23 @@ def SRGAN_g(t_image, is_train=False, reuse=False):
         # residual in residual dense blocks
         for i in range(8):
             n0_0 = Conv2d(n, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c0/%s' % i)
-            n0_1 = ElementwiseLayer([n, n0_0], tf.add, name='res_add0/%s' % i)
+            n0_1 = ConcatLayer([n, n0_0], concat_dim=-1, name='res_concat0/%s' % i)
 
             n1_0 = Conv2d(n0_1, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c1/%s' % i)
-            n1_1 = ElementwiseLayer([n, n0_0, n1_0], tf.add, name='res_add1/%s' % i)
+            n1_1 = ConcatLayer([n, n0_0, n1_0],concat_dim=-1, name='res_concat1/%s' % i)
 
             n2_0 = Conv2d(n1_1, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c2/%s' % i)
-            n2_1 = ElementwiseLayer([n, n0_0, n1_0, n2_0], tf.add, name='res_add2/%s' % i)
+            n2_1 = ConcatLayer([n, n0_0, n1_0, n2_0], concat_dim=-1, name='res_concat2/%s' % i)
 
             n3_0 = Conv2d(n2_1, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c3/%s' % i)
-            n3_1 = ElementwiseLayer([n, n0_0, n1_0, n2_0, n3_0], tf.add, name='res_add3/%s' % i)
+            n3_1 = ConcatLayer([n, n0_0, n1_0, n2_0, n3_0], concat_dim=-1, name='res_concat3/%s' % i)
 
             n4_0 = Conv2d(n3_1, df_dim, (3, 3), (1, 1), act=None, padding='SAME', W_init=w_init, b_init=b_init, name='res_c4/%s' % i)
-            n4_1 = ElementwiseLayer([n, n4_0], tf.add, name='res_add4/%s' % i)
+            n4_1 = ElementwiseLayer([n, n4_0], tf.add, name='res_add0/%s' % i)
             n = n4_1
 
         n = Conv2d(n, df_dim, (3, 3), (1, 1), act=None, padding='SAME', W_init=w_init, b_init=b_init, name='res_c5')
-        n = ElementwiseLayer([temp, n], tf.add, name='res_add5')
+        n = ElementwiseLayer([temp, n], tf.add, name='res_add1')
         # residual in residual dense blocks end
 
         n = Conv2d(n, 256, (3, 3), (1, 1), act=None, padding='SAME', W_init=w_init, name='c1')

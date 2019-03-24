@@ -1,18 +1,15 @@
 ## Modified SRGAN
 
-  This repo was forked from @zsdonghao 's [tensorlayer/srgan](https://github.com/tensorlayer/srgan) repo.  
-  Referred to [ESRGAN](https://github.com/xinntao/ESRGAN).
+  This repo was forked from @zsdonghao 's [tensorlayer/srgan](https://github.com/tensorlayer/srgan) repo. 
 
 - **Relativistic LSGAN.**
 - **Changed to use "Group Normalization" layers instead of "Batch Normalization" layers.**
 - **Increased channels in Generator.**
-- **Residual in Residual Dense Block (RRDB) structure in Generator.**
+- **Residual in Residual structure in Generator.**
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Using MAE (Mean Absolute Error) loss.**
-- **Using small weight initialization.**
 - **Without "VGG".**
 
-### This model is incomplete for now.
 
 ### System Requirements
 - **Memory: 12GB RAM**

@@ -92,6 +92,7 @@ def SRGAN_d(input_images, is_train=True, reuse=False):
 
         n = FlattenLayer(n, name='f0')
         n = DenseLayer(n, n_units=1, act=tf.identity, W_init=w_init, name='d0')
+        n.outputs = tf.sigmoid(n.outputs)
         logits = n.outputs
 
     return n, logits

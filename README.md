@@ -3,9 +3,9 @@
   This repo was forked from @zsdonghao 's [tensorlayer/srgan](https://github.com/tensorlayer/srgan) repo. 
 
 - **Relativistic LSGAN.**
-- **Changed to use "Group Normalization" layers instead of "Batch Normalization" layers.**
-- **Increased channels in Generator.**
-- **Residual in Residual structure in Generator.**
+- **Remove normalization layers.**
+- **Increased channels.**
+- **Residual of Residual structure in Generator.**
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Using MAE (Mean Absolute Error) loss.**
 - **Without "VGG".**

@@ -87,7 +87,7 @@ def train():
     mae_loss = tf.reduce_mean(tf.map_fn(tf.abs, t_target_image - net_g.outputs))
 
     # GAN Loss
-    gan_loss_multiplier = tf.placeholder(tf.float32)
+    gan_loss_multiplier = 1e-2 * tf.placeholder(tf.float32)
 
     d_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) - 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) + 1)))
     g_gan_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) + 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) - 1)))
@@ -161,6 +161,12 @@ def train():
             total_d_loss += errD
             total_g_loss += errG
             n_iter += 1
+
+            if n_iter % 10 == 0:
+                ## quick evaluation on train set
+                out = sess.run(net_g_test.outputs, {sample_t_image: sample_imgs_96})
+                print("[*] save images")
+                tl.vis.save_images(out, [ni, ni], save_dir_gan + '/train_%d_%d.png' % (epoch, n_iter))
 
         log = ("[*] Epoch[%2d/%2d] time: %4.2fs d_loss: %.8f g_loss: %.8f" %
             (epoch, n_epoch_gan, time.time() - epoch_time, total_d_loss / n_iter, total_g_loss / n_iter))

@@ -33,7 +33,6 @@ valid_hr_img_path = config.VALID.hr_img_path
 train_hr_img_path = config.TRAIN.hr_img_path
 eval_img_name = config.VALID.eval_img_name
 eval_img_path = config.VALID.eval_img_path
-initial_half_epoch = float(config.TRAIN.initial_half_epoch)
 
 ni = int(np.sqrt(sample_batch_size))
 
@@ -124,7 +123,7 @@ def train():
     sess.run(tf.assign(learning_rate_var, learning_rate))
     for epoch in range(0, n_epoch_gan + 1):
         epoch_time = time.time()
-        total_d_loss, total_g_loss, n_iter = 0, 0, 0
+        total_d_loss, total_g_loss_mae, total_g_loss_gan, n_iter = 0, 0, 0, 0
 
         train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*.png', printable=False)
         random.shuffle(train_hr_img_list)
@@ -149,15 +148,16 @@ def train():
             ## update D
             errD, d_r, d_f, _ = sess.run([d_loss, d_real, d_fake, d_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
             ## update G
-            errG, errM, errA, _ = sess.run([g_loss, mae_loss, g_gan_loss, g_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
-            print("Epoch[%2d/%2d] %4d time: %4.2fs d_loss: %.8f g_loss: %.8f (mae: %.8f gan: %.8f) d_r: %.8f d_f: %.8f" %
-                  (epoch, n_epoch_gan, n_iter, time.time() - step_time, errD, errG, errM, errA, d_r, d_f))
+            errM, errA, _, _ = sess.run([mae_loss, g_gan_loss, g_loss, g_optim], {t_image: b_imgs_96, t_target_image: b_imgs_384})
+            print("Epoch[%2d/%2d] %4d time: %4.2fs d_loss: %.8f g_loss_mae: %.8f g_loss_gan: %.8f d_r: %.8f d_f: %.8f" %
+                  (epoch, n_epoch_gan, n_iter, time.time() - step_time, errD, errM, errA, d_r, d_f))
             total_d_loss += errD
-            total_g_loss += errG
+            total_g_loss_mae += errM
+            total_g_loss_gan += errA
             n_iter += 1
 
-        log = ("[*] Epoch[%2d/%2d] time: %4.2fs d_loss: %.8f g_loss: %.8f" %
-            (epoch, n_epoch_gan, time.time() - epoch_time, total_d_loss / n_iter, total_g_loss / n_iter))
+        log = ("[*] Epoch[%2d/%2d] time: %4.2fs d_loss: %.8f g_loss_mae: %.8f g_loss_gan: %.8f" %
+            (epoch, n_epoch_gan, time.time() - epoch_time, total_d_loss / n_iter, total_g_loss_mae / n_iter, total_g_loss_gan / n_iter))
         print(log)
 
         ## quick evaluation on train set

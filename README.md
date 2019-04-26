@@ -9,6 +9,7 @@
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Using MAE (Mean Absolute Error) loss.**
 - **Without "VGG".**
+- **Added compression noise removal capability.**
 
 
 ### System Requirements
@@ -29,6 +30,9 @@ sudo python3 -m pip install --upgrade tensorlayer
 git clone https://github.com/ImpactCrater/SRGAN-R.git
 sudo python3 -m pip install easydict
 sudo apt install python3-tk
+sudo python3 -m pip uninstall pillow
+sudo apt install libwebp-dev
+sudo python3 -m pip install pillow
 ```
 
 

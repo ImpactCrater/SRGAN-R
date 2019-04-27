@@ -36,7 +36,7 @@ sudo python3 -m pip install pillow
 ```
 3. If you use AWS EC2 GPU instance and DL AMI, you may need to create a symbolic link of "libwebp.so" as follow.
 ```bash
-sudo apt install libwebp-dev
+(amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo apt install libwebp-dev
 (amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo find / -name "libwebp.*" -type f
 ....
 ....
@@ -44,8 +44,8 @@ sudo apt install libwebp-dev
 ./usr/lib/x86_64-linux-gnu/libwebp.so.5.0.4
 ./usr/lib/x86_64-linux-gnu/libwebp.a
 (amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo ln -s /usr/lib/x86_64-linux-gnu/libwebp.so.5.0.4 /usr/lib
-sudo python3 -m pip uninstall pillow
-sudo python3 -m pip install pillow
+(amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo python3 -m pip uninstall pillow
+(amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo python3 -m pip install pillow
 ```
 
 

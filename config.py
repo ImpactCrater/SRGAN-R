@@ -23,6 +23,10 @@ config.TRAIN.learning_rate = 1e-4
 ## adversarial learning
 config.TRAIN.n_epoch_gan = 1000
 
+## noise reduction
+## WebP compression level; 1 to 100 (smaller value adds more noise)
+config.TRAIN.noise_level = 70
+
 ## train set location
 config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'
 

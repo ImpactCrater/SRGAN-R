@@ -25,7 +25,7 @@ config.TRAIN.n_epoch_gan = 1000
 
 ## noise reduction
 ## WebP compression level; 1 to 100 (smaller value adds more noise)
-config.TRAIN.noise_level = 70
+config.TRAIN.noise_level = 50
 
 ## train set location
 config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'

@@ -49,6 +49,25 @@ sudo python3 -m pip install pillow
 ```
 
 
+### My Results
+
+<div align="center">
+	<img src="img/SRGAN-R_Comparison_1_label_1.png"/>
+</div>
+</a>
+
+<div align="center">
+	<img src="img/SRGAN-R_Comparison_2_label_1.png"/>
+</div>
+</a>
+
+<div align="center">
+	<img src="img/SRGAN-R_Comparison_3_label_1.png"/>
+</div>
+</a>
+Original image is from iStock.
+
+
 ### Prepare Data
 
  - You need to have the high resolution images for training and validation.

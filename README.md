@@ -30,8 +30,21 @@ sudo python3 -m pip install --upgrade tensorlayer
 git clone https://github.com/ImpactCrater/SRGAN-R.git
 sudo python3 -m pip install easydict
 sudo apt install python3-tk
-sudo python3 -m pip uninstall pillow
 sudo apt install libwebp-dev
+sudo python3 -m pip uninstall pillow
+sudo python3 -m pip install pillow
+```
+3. If you use AWS EC2 GPU instance and DL AMI, you may need to create a symbolic link of "libwebp.so" as follow.
+```bash
+sudo apt install libwebp-dev
+(amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo find / -name "libwebp.*" -type f
+....
+....
+./usr/lib/x86_64-linux-gnu/pkgconfig/libwebp.pc
+./usr/lib/x86_64-linux-gnu/libwebp.so.5.0.4
+./usr/lib/x86_64-linux-gnu/libwebp.a
+(amazonei_tensorflow_p36) ubuntu@ipxxxxxxxx:/$ sudo ln -s /usr/lib/x86_64-linux-gnu/libwebp.so.5.0.4 /usr/lib
+sudo python3 -m pip uninstall pillow
 sudo python3 -m pip install pillow
 ```
 

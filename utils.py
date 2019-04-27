@@ -10,6 +10,9 @@ import numpy as np
 from PIL import Image
 import random
 from io import BytesIO
+from config import config
+
+noise_level = config.TRAIN.noise_level
 
 def rescale_m1p1(x):
     x = x / 127.5 - 1 # rescale to [－1, 1]
@@ -25,7 +28,7 @@ def crop_sub_imgs_fn(x, is_random=True):
 
 def downsample_fn(x):
     x = Image.fromarray(np.uint8(x)).resize((96, 96), Image.BICUBIC)
-    q = random.randrange(50, 101)
+    q = random.randrange(noise_level, 101)
     img_file = BytesIO()
     x.save(img_file, 'webp', quality=q)
     x = Image.open(img_file)

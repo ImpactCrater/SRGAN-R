@@ -76,6 +76,12 @@ Original image is from iStock.
    -  Subdirectories are searched recursively.
 
 
+### You can use pre-trained model and re-train it.
+ 1. Download the [.tar.xz file from the file storage(Yahoo! JAPAN)](https://yahoo.jp/box/Ij7Goc).
+ 1. Extract it.
+ 1. Move 2 files 'd.npz', 'g.npz' into './SRGAN-R/checkpoint/'.
+ 1. Run.
+
 
 ### Run
 

@@ -31,7 +31,7 @@ config.TRAIN.n_epoch_gan = 1000
 config.TRAIN.noise_level = 50
 
 ## train set location
-config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training_test1/'
+config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'
 
 ## test set location
 config.VALID.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Validation/'

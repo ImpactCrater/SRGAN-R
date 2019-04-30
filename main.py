@@ -61,7 +61,7 @@ def train():
     tl.files.exists_or_mkdir(checkpoint_path)
 
     ###====================== PRE-LOAD DATA ===========================###
-    valid_hr_img_list = sorted(tl.files.load_file_list(path=valid_hr_img_path, regx='.*.png', printable=False))
+    valid_hr_img_list = sorted(tl.files.load_file_list(path=valid_hr_img_path, regx='.*\.(bmp|png|webp|jpg)', printable=False))
 
     ###========================== DEFINE MODEL ============================###
     ## train inference
@@ -126,7 +126,7 @@ def train():
         epoch_time = time.time()
         total_d_loss, total_g_loss_mae, total_g_loss_gan, n_iter = 0, 0, 0, 0
 
-        train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*.png', recursive=True, printable=False)
+        train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*\.(bmp|png|webp|jpg)', recursive=True, printable=False)
         random.shuffle(train_hr_img_list)
 
         list_length = len(train_hr_img_list)

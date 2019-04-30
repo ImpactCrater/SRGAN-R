@@ -16,7 +16,7 @@ config.checkpoint_path = config.home_path + '/SRGAN-R/checkpoint/'
 config.samples_path = config.home_path + '/SRGAN-R/samples/'
 
 # save file format
-config.save_file_format = '.webp'
+config.save_file_format = '.png'
 
 ## Adam
 config.TRAIN.sample_batch_size = 25
@@ -31,7 +31,7 @@ config.TRAIN.n_epoch_gan = 1000
 config.TRAIN.noise_level = 50
 
 ## train set location
-config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'
+config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training_test1/'
 
 ## test set location
 config.VALID.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Validation/'

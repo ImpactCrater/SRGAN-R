@@ -31,17 +31,18 @@ samples_path = config.samples_path
 checkpoint_path = config.checkpoint_path
 valid_hr_img_path = config.VALID.hr_img_path
 train_hr_img_path = config.TRAIN.hr_img_path
-eval_img_name = config.VALID.eval_img_name
+eval_img_name_regx = config.VALID.eval_img_name_regx
 eval_img_path = config.VALID.eval_img_path
+save_file_format = config.save_file_format
 
 ni = int(np.sqrt(sample_batch_size))
 
 
-def load_deep_file_list(path=None, regx='\.npz', printable=True):
+def load_deep_file_list(path=None, regx='\.npz', recursive=True, printable=True):
     if path == False:
         path = os.getcwd()
     pathStar = path + '**'
-    file_list = glob.glob(pathStar, recursive=True)
+    file_list = glob.glob(pathStar, recursive=recursive)
     return_list = []
     for idx, f in enumerate(file_list):
         if re.search(regx, f):
@@ -116,8 +117,8 @@ def train():
     print('sample HR sub-image:', sample_imgs_384.shape, sample_imgs_384.min(), sample_imgs_384.max())
     sample_imgs_96 = tl.prepro.threading_data(sample_imgs_384, fn=downsample_fn)
     print('sample LR sub-image:', sample_imgs_96.shape, sample_imgs_96.min(), sample_imgs_96.max())
-    tl.vis.save_images(sample_imgs_96, [ni, ni], save_dir_gan + '/_train_sample_96.png')
-    tl.vis.save_images(sample_imgs_384, [ni, ni], save_dir_gan + '/_train_sample_384.png')
+    save_images(sample_imgs_96, [ni, ni], save_dir_gan + '/_train_sample_96' + save_file_format)
+    save_images(sample_imgs_384, [ni, ni], save_dir_gan + '/_train_sample_384' + save_file_format)
 
     ###========================= train GAN =========================###
     sess.run(tf.assign(learning_rate_var, learning_rate))
@@ -125,7 +126,7 @@ def train():
         epoch_time = time.time()
         total_d_loss, total_g_loss_mae, total_g_loss_gan, n_iter = 0, 0, 0, 0
 
-        train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*.png', printable=False)
+        train_hr_img_list = load_deep_file_list(path=train_hr_img_path, regx='.*.png', recursive=True, printable=False)
         random.shuffle(train_hr_img_list)
 
         list_length = len(train_hr_img_list)
@@ -163,7 +164,7 @@ def train():
         ## quick evaluation on train set
         out = sess.run(net_g_test.outputs, {sample_t_image: sample_imgs_96})
         print("[*] save images")
-        tl.vis.save_images(out, [ni, ni], save_dir_gan + '/train_%d.png' % epoch)
+        save_images(out, [ni, ni], save_dir_gan + '/train_%d' + save_file_format % epoch)
 
         ## save model
         tl.files.save_npz(net_g.all_params, name=checkpoint_path + 'g.npz', sess=sess)
@@ -176,7 +177,9 @@ def evaluate():
     tl.files.exists_or_mkdir(save_dir)
 
     ###========================== DEFINE MODEL ============================###
-    valid_lr_img = get_imgs_fn(eval_img_name, eval_img_path) # if you want to test your own image
+    eval_img_name_list = load_deep_file_list(path=eval_img_path, regx=eval_img_name_regx, recursive=False, printable=False)
+    print(eval_img_name_list)
+    valid_lr_img = get_imgs_fn(eval_img_name_list[0], eval_img_path) # if you want to test your own image
     valid_lr_img = rescale_m1p1(valid_lr_img)
 
     size = valid_lr_img.shape
@@ -196,11 +199,11 @@ def evaluate():
 
     print("LR size: %s /  generated HR size: %s" % (size, out.shape))
     print("[*] save images")
-    tl.vis.save_image(out[0], save_dir + '/valid_gen.png')
+    save_img_fn(out[0], save_dir + '/valid_gen' + save_file_format)
 
     out_bicu = (valid_lr_img + 1) * 127.5 # rescale to [0, 255]
     out_bicu = np.array(Image.fromarray(np.uint8(out_bicu)).resize((size[1] * 4, size[0] * 4), Image.BICUBIC))
-    tl.vis.save_image(out_bicu, save_dir + '/valid_bicubic.png')
+    save_img_fn(out_bicu, save_dir + '/valid_bicubic' + save_file_format)
 
 
 if __name__ == '__main__':

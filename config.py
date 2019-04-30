@@ -15,6 +15,9 @@ config.checkpoint_path = config.home_path + '/SRGAN-R/checkpoint/'
 # samples location
 config.samples_path = config.home_path + '/SRGAN-R/samples/'
 
+# save file format
+config.save_file_format = '.webp'
+
 ## Adam
 config.TRAIN.sample_batch_size = 25
 config.TRAIN.batch_size = 4
@@ -33,7 +36,7 @@ config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'
 ## test set location
 config.VALID.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Validation/'
 config.VALID.eval_img_path = config.home_path + '/SRGAN-R/LRImage_Evaluation/'
-config.VALID.eval_img_name = '1.png'
+config.VALID.eval_img_name_regx = '/1\.(bmp|png|webp|jpg)'
 
 def log_config(filename, cfg):
     with open(filename, 'w') as f:

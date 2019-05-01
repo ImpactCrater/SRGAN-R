@@ -22,21 +22,26 @@ def get_imgs_fn(file_name, path):
     x = np.asarray(Image.open(path + file_name))
     return x
 
-def save_img_fn(x, file_name):
+def save_img_fn(x, save_file_format, file_name):
     x = Image.fromarray(np.uint8(x))
-    x.save(file_name)
+    if save_file_format == '.webp':
+        x.save(file_name + save_file_format, lossless = True, quality = 100, method = 6)
+    else:
+        x.save(file_name + save_file_format)
 
-def save_images(images, size, image_path='_temp.png'):
+def save_images(images, size, save_file_format, image_path='_temp'):
     """Save multiple images into one single image.
 
     Parameters
     -----------
-    images : numpy array
+    images: numpy array
         (batch, w, h, c)
-    size : list of 2 ints
+    size: list of 2 ints
         row and column number.
         number of images should be equal or less than size[0] * size[1]
-    image_path : str
+    save_file_format: str
+        '\.(bmp|png|webp|jpg)'
+    image_path: str
         save path
 
     """
@@ -52,18 +57,18 @@ def save_images(images, size, image_path='_temp.png'):
             img[j * h:j * h + h, i * w:i * w + w, :] = image
         return img
 
-    def imsave(images, size, path):
+    def imsave(images, size, save_file_format, path):
         if np.max(images) <= 1 and (-1 <= np.min(images) < 0):
             images = ((images + 1) * 127.5).astype(np.uint8)
         elif np.max(images) <= 1 and np.min(images) >= 0:
             images = (images * 255).astype(np.uint8)
 
-        return save_img_fn(merge(images, size), path)
+        return save_img_fn(merge(images, size), save_file_format, path)
 
     if len(images) > size[0] * size[1]:
         raise AssertionError("number of images should be equal or less than size[0] * size[1] {}".format(len(images)))
 
-    return imsave(images, size, image_path)
+    return imsave(images, size, save_file_format, image_path)
 
 def crop_sub_imgs_fn(x, is_random=True):
     x = crop(x, wrg=384, hrg=384, is_random=is_random)

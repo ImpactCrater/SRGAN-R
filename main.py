@@ -117,8 +117,8 @@ def train():
     print('sample HR sub-image:', sample_imgs_384.shape, sample_imgs_384.min(), sample_imgs_384.max())
     sample_imgs_96 = tl.prepro.threading_data(sample_imgs_384, fn=downsample_fn)
     print('sample LR sub-image:', sample_imgs_96.shape, sample_imgs_96.min(), sample_imgs_96.max())
-    save_images(sample_imgs_96, [ni, ni], save_dir_gan + '/_train_sample_96' + save_file_format)
-    save_images(sample_imgs_384, [ni, ni], save_dir_gan + '/_train_sample_384' + save_file_format)
+    save_images(sample_imgs_96, [ni, ni], save_file_format, save_dir_gan + '/_train_sample_96')
+    save_images(sample_imgs_384, [ni, ni], save_file_format, save_dir_gan + '/_train_sample_384')
 
     ###========================= train GAN =========================###
     sess.run(tf.assign(learning_rate_var, learning_rate))
@@ -164,7 +164,7 @@ def train():
         ## quick evaluation on train set
         out = sess.run(net_g_test.outputs, {sample_t_image: sample_imgs_96})
         print("[*] save images")
-        save_images(out, [ni, ni], save_dir_gan + '/train_%d' + save_file_format % epoch)
+        save_images(out, [ni, ni], save_file_format, save_dir_gan + '/train_%d' % epoch)
 
         ## save model
         tl.files.save_npz(net_g.all_params, name=checkpoint_path + 'g.npz', sess=sess)
@@ -199,11 +199,14 @@ def evaluate():
 
     print("LR size: %s /  generated HR size: %s" % (size, out.shape))
     print("[*] save images")
-    save_img_fn(out[0], save_dir + '/valid_gen' + save_file_format)
+    out = (out + 1) * 127.5 # rescale to [0, 255]
+    out_uint8 = out.astype('uint8')
+    save_img_fn(out_uint8[0], save_file_format, save_dir + '/valid_gen')
 
     out_bicu = (valid_lr_img + 1) * 127.5 # rescale to [0, 255]
     out_bicu = np.array(Image.fromarray(np.uint8(out_bicu)).resize((size[1] * 4, size[0] * 4), Image.BICUBIC))
-    save_img_fn(out_bicu, save_dir + '/valid_bicubic' + save_file_format)
+    out_bicu_uint8 = out_bicu.astype('uint8')
+    save_img_fn(out_bicu_uint8, save_file_format, save_dir + '/valid_bicubic')
 
 
 if __name__ == '__main__':

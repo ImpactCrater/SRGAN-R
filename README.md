@@ -10,6 +10,7 @@
 - **Using MAE (Mean Absolute Error) loss.**
 - **Without "VGG".**
 - **Added compression noise removal capability.**
+- **You can read/write PNG/WebP/BMP/JPEG/TIFF files.**
 
 
 ### System Requirements

@@ -16,7 +16,7 @@ config.checkpoint_path = config.home_path + '/SRGAN-R/checkpoint/'
 config.samples_path = config.home_path + '/SRGAN-R/samples/'
 
 # save file format
-config.save_file_format = '.png'
+config.save_file_format = '.webp'
 
 ## Adam
 config.TRAIN.sample_batch_size = 25
@@ -28,7 +28,7 @@ config.TRAIN.n_epoch_gan = 1000
 
 ## noise reduction
 ## WebP compression level; 1 to 100 (smaller value adds more noise)
-config.TRAIN.noise_level = 50
+config.TRAIN.noise_level = 40
 
 ## train set location
 config.TRAIN.hr_img_path = config.home_path + '/SRGAN-R/HRImage_Training/'

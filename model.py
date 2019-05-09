@@ -29,9 +29,9 @@ def SRGAN_g(t_image, is_train=False, reuse=False):
             for j in range(4):
                 temp0 = n
                 for i in range(4):
-                    nn = Conv2d(n, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c0/%s_%s_%s' % (k, j, i))
-                    nn = Conv2d(nn, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c1/%s_%s_%s' % (k, j, i))
-                    nn = ElementwiseLayer([n, nn], tf.add, name='res_add0/%s_%s_%s' % (k, j, i))
+                    n0 = Conv2d(n, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c0/%s_%s_%s' % (k, j, i))
+                    n1 = Conv2d(n0, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c1/%s_%s_%s' % (k, j, i))
+                    nn = ElementwiseLayer([n, n0, n1], tf.add, name='res_add0/%s_%s_%s' % (k, j, i))
                     n = nn
 
                 n = Conv2d(n, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='res_c2/%s_%s' % (k, j))

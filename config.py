@@ -16,7 +16,7 @@ config.checkpoint_path = config.home_path + '/SRGAN-R/checkpoint/'
 config.samples_path = config.home_path + '/SRGAN-R/samples/'
 
 # save file format
-config.save_file_format = '.webp'
+config.save_file_format = '.png'
 
 ## Adam
 config.TRAIN.sample_batch_size = 25

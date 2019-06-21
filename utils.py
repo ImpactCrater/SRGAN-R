@@ -7,7 +7,7 @@ from tensorlayer.prepro import *
 
 import scipy
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageMath
 import random
 from io import BytesIO
 from config import config
@@ -70,9 +70,21 @@ def save_images(images, size, save_file_format, image_path='_temp'):
 
     return imsave(images, size, save_file_format, image_path)
 
-def crop_sub_imgs_fn(x, is_random=True):
-    x = crop(x, wrg=384, hrg=384, is_random=is_random)
-    return x
+def crop_sub_imgs_fn(img, is_random=True):
+    img = crop(img, wrg=384, hrg=384, is_random=is_random)
+    return img
+
+def crop_data_augment_fn(img, is_random=True):
+    min_size = img.shape[0] if img.shape[0] < img.shape[1] else img.shape[1]
+    random_size = random.randrange(384, min_size)
+    img = crop(img, wrg=random_size, hrg=random_size, is_random=is_random)
+    img = Image.fromarray(np.uint8(img)).resize((384, 384), Image.BICUBIC)
+    h, s, v = img.convert("HSV").split()
+    random_value = random.randrange(-12, 12)
+    h_shifted = h.point(lambda x: (x + random_value) % 255 if (x + random_value) % 255 >= 0 else 255 - (x + random_value))
+    img = Image.merge("HSV", (h_shifted, s, v)).convert("RGB")
+    img = np.array(img)
+    return img
 
 def downsample_fn(x):
     x = Image.fromarray(np.uint8(x)).resize((96, 96), Image.BICUBIC)

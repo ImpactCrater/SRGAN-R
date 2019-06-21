@@ -17,10 +17,10 @@ def SRGAN_g(t_image, is_train=False, reuse=False):
     b_init = None # tf.constant_initializer(value=0.0)
     df_dim = 128
     swish = lambda x: tf.nn.swish(x)
-    with tf.variable_scope("SRGAN_g", reuse=reuse) as vs:
+    with tf.compat.v1.variable_scope("SRGAN_g", reuse=reuse) as vs:
         n = InputLayer(t_image, name='in')
         n = Conv2d(n, df_dim, (3, 3), (1, 1), act=swish, padding='SAME', W_init=w_init, name='c0')
-        n = GroupNormLayer(n, groups=8, act=None, name='gn0')
+        n = GroupNormLayer(n, groups=16, act=None, name='gn0')
 
         # residual in residual blocks
         temp2 = n
@@ -59,7 +59,7 @@ def SRGAN_d(input_images, is_train=True, reuse=False):
     b_init = None # tf.constant_initializer(value=0.0)
     df_dim = 64
     swish = lambda x: tf.nn.swish(x)
-    with tf.variable_scope("SRGAN_d", reuse=reuse):
+    with tf.compat.v1.variable_scope("SRGAN_d", reuse=reuse):
         n = InputLayer(input_images, name='input/images')
         n = Conv2d(n, df_dim, (4, 4), (2, 2), act=swish, padding='SAME', W_init=w_init, b_init=b_init, name='c0')
         n = GroupNormLayer(n, groups=8, act=None, name='gn0')

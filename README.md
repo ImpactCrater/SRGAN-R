@@ -9,7 +9,8 @@
 - **Changed to use "Swish" activation function instead of "ReLU".**
 - **Using MAE (Mean Absolute Error) loss.**
 - **Without "VGG".**
-- **Added compression noise removal capability.**
+- **Image data augmentation with random size cropping at random position, and random hue rotation.**
+- **Added compression noise removal capability by learning WebP image compression noise.**
 - **You can read/write PNG/WebP/BMP/JPEG/TIFF files.**
 
 
@@ -19,7 +20,7 @@
 
 ### Preparation
 
-We run this script under [TensorFlow](https://www.tensorflow.org) 1.12 and the [TensorLayer](https://github.com/tensorlayer/tensorlayer) 1.8.0+.
+We run this script under [TensorFlow](https://www.tensorflow.org) 1.13 and the [TensorLayer](https://github.com/tensorlayer/tensorlayer) 1.11.1.
 
 1. Install TensorFlow.
 

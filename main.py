@@ -65,9 +65,9 @@ def train():
 
     ###========================== DEFINE MODEL ============================###
     ## train inference
-    sample_t_image = tf.placeholder('float32', [sample_batch_size, 96, 96, 3], name='sample_t_image_input_to_SRGAN_generator')
-    t_image = tf.placeholder('float32', [batch_size, 96, 96, 3], name='t_image_input_to_SRGAN_generator')
-    t_target_image = tf.placeholder('float32', [batch_size, 384, 384, 3], name='t_target_image')
+    sample_t_image = tf.compat.v1.placeholder('float32', [sample_batch_size, 96, 96, 3], name='sample_t_image_input_to_SRGAN_generator')
+    t_image = tf.compat.v1.placeholder('float32', [batch_size, 96, 96, 3], name='t_image_input_to_SRGAN_generator')
+    t_target_image = tf.compat.v1.placeholder('float32', [batch_size, 384, 384, 3], name='t_target_image')
 
     net_g = SRGAN_g(t_image, is_train=True, reuse=False)
     net_d, logits_real = SRGAN_d(t_target_image, is_train=True, reuse=False)
@@ -90,7 +90,7 @@ def train():
     d_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) - 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) + 1)))
     g_gan_loss = 0.5 * (tf.reduce_mean(tf.square(logits_real - tf.reduce_mean(logits_fake) + 1)) + tf.reduce_mean(tf.square(logits_fake - tf.reduce_mean(logits_real) - 1)))
 
-    g_loss = 1e-3 * g_gan_loss + mae_loss
+    g_loss = 1e-2 * g_gan_loss + mae_loss
 
     d_real = tf.reduce_mean(logits_real)
     d_fake = tf.reduce_mean(logits_fake)
@@ -102,8 +102,8 @@ def train():
     d_vars = tl.layers.get_variables_with_name('SRGAN_d', True, True)
 
     ## SRGAN
-    g_optim = tf.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(g_loss, var_list=g_vars)
-    d_optim = tf.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(d_loss, var_list=d_vars)
+    g_optim = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(g_loss, var_list=g_vars)
+    d_optim = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate_var).minimize(d_loss, var_list=d_vars)
 
     ###========================== RESTORE MODEL =============================###
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=False))
@@ -142,7 +142,7 @@ def train():
             step_time = time.time()
             b_imgs_list = train_hr_img_list[idx : idx + batch_size]
             b_imgs = tl.prepro.threading_data(b_imgs_list, fn=get_imgs_fn, path=train_hr_img_path)
-            b_imgs_384 = tl.prepro.threading_data(b_imgs, fn=crop_sub_imgs_fn, is_random=True)
+            b_imgs_384 = tl.prepro.threading_data(b_imgs, fn=crop_data_augment_fn, is_random=True)
             b_imgs_96 = tl.prepro.threading_data(b_imgs_384, fn=downsample_fn)
             b_imgs_384 = tl.prepro.threading_data(b_imgs_384, fn=rescale_m1p1)
 
@@ -183,7 +183,7 @@ def evaluate():
     valid_lr_img = rescale_m1p1(valid_lr_img)
 
     size = valid_lr_img.shape
-    t_image = tf.placeholder('float32', [1, None, None, 3], name='input_image')
+    t_image = tf.compat.v1.placeholder('float32', [1, None, None, 3], name='input_image')
 
     net_g = SRGAN_g(t_image, is_train=False, reuse=False)
 
